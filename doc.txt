@@ -1,0 +1,103 @@
+# Créer un dossier pour notre projet
+mkdir project-name
+cd project-name
+
+# Créer un virtualenv
+python3 -m venv env-name
+
+# Activer mon environnement
+source env-name/bin/activate
+ou 
+env-name/bin/activate
+
+# S'assurer d'avoir la dernière version de pip
+python -m pip install --upgrade pip
+
+# Installer les paquets de django avec un fic "requirments"
+touch requirements.txt
+avec Django~=3.2.10
+pip install -r requirements.txt
+
+si bug : python -m pip install -U --force-reinstall pip
+
+# Créer projet django
+django-admin startproject mysite
+
+# settings.py 
+
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'static'
+
+ALLOWED_HOSTS = ['127.0.0.1', '.pythonanywhere.com']
+
+# Configurer bdd
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
+
+(à faire mais pour mariadb)
+
+# Créer la bdd
+Il faut être dans le dos contenant manage.py
+python manage.py migrate
+
+#Lancer le serveur
+python manage.py runserver
+
+Se rendre à l'adresse http://127.0.0.1:8000/
+
+# Créer une application
+python manage.py startapp app-name
+
+ici ex : app-name = blog
+
+# L'ajouter dans settings.py
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'blog.apps.BlogConfig',
+]
+
+# Créer des tables dans bdd à partir de mon modèle
+python manage.py makemigrations blog
+python manage.py migrate blog
+
+
+Dans blog/admin.py
+from django.contrib import admin
+from .models import Post
+
+admin.site.register(Post)
+
+# Créer un superuser
+python manage.py createsuperuser
+
+adresse : http://127.0.0.1:8000/admin/
+
+# Créer une url dans url.py
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', include('blog.urls')),
+]
+
+
+Créer un fic urls.py dans le dos de mon app (ici blog)
+
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.post_list, name='post_list'),
+]
+
